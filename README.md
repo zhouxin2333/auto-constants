@@ -36,6 +36,7 @@ public class User_{
 另外的，如果是一个实体类，例如
 ```
 @Entity
+@AutoConstants
 public class Person{
     @Column
     private String name;
@@ -43,7 +44,7 @@ public class Person{
     private String nickName;
 }
 ```
-加上注解`@AutoConstants`之后，还是会得到一个新常量类`User_`
+编译后还是会得到一个新常量类`Person_`
 
 ```
 public class Person_{
