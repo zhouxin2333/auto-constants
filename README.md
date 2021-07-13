@@ -2,7 +2,10 @@
 
 **auto-constants**项目是一个为`Java Bean`自动生成属性名常量类的工具，同时支持`JPA`规范下的表名和表字段名常量
 
-举个例子
+* [举个例子](#举个例子)
+* [如何使用](#如何使用)
+
+### 举个例子
 
 ```
 public class User{
@@ -52,3 +55,12 @@ public class Person_{
 }
 ```
 
+### 如何使用
+添加以下依赖即可使用
+```
+<dependency>
+     <groupId>cool.zhouxin</groupId>
+     <artifactId>auto-constants</artifactId>
+     <version>0.0.1</version>
+</dependency>
+```
