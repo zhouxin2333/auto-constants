@@ -17,10 +17,7 @@ import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -147,7 +144,9 @@ public class AutoConstantsProcessor extends AbstractProcessor {
         if (table == null) return Stream.empty();
 
         String tableName = table.name();
-        if (tableName.isEmpty()) return Stream.empty();
+        if (tableName.isEmpty()) {
+            tableName = this.buildTableNameValue(className);
+        }
 
         String typeElementName = typeElement.getSimpleName().toString();
         FieldSpec fieldTableSpec = FieldSpec.builder(String.class, this.buildFieldTableName(typeElementName), fieldModifierArray)
@@ -168,6 +167,20 @@ public class AutoConstantsProcessor extends AbstractProcessor {
             typeElementList.add(typeElement);
         }
         return typeElementList;
+    }
+
+    private String buildTableNameValue(ClassName className) {
+        StringBuilder builder = new StringBuilder(className.simpleName().replace('.', '_'));
+        for (int i = 1; i < builder.length() - 1; i++) {
+            if (isUnderscoreRequired(builder.charAt(i - 1), builder.charAt(i), builder.charAt(i + 1))) {
+                builder.insert(i++, '_');
+            }
+        }
+        return builder.toString().toLowerCase(Locale.ROOT);
+    }
+
+    private boolean isUnderscoreRequired(char before, char current, char after) {
+        return Character.isLowerCase(before) && Character.isUpperCase(current) && Character.isLowerCase(after);
     }
 
     private Stream<FieldSpec> buildFieldElements(VariableElement variableElement, ClassName className) {
