@@ -11,12 +11,14 @@ import lombok.SneakyThrows;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -34,6 +36,7 @@ public class AutoConstantsProcessor extends AbstractProcessor {
     private Elements elementUtils;
     private Types typeUtils;
 
+    private static final String METHOD_NAME = "extra";
     private static final Modifier[] fieldModifierArray = new Modifier[]{Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL};
     private static Pattern fieldNamePattern = Pattern.compile("[A-Z]");
     private static String fieldNameJoiner = "_";
@@ -76,8 +79,27 @@ public class AutoConstantsProcessor extends AbstractProcessor {
         for (TypeElement element : elements) {
             JavaFile javaFile = this.createJavaFile(element);
             javaFile.writeTo(this.filer);
+
+            this.extraProcess(element);
         }
         return true;
+    }
+
+    private void extraProcess(TypeElement element) throws IOException {
+
+        AutoConstants annotation = element.getAnnotation(AutoConstants.class);
+
+        List<? extends DeclaredType> typeMirrors = GetTypeMirrorUtils.getDeclaredList(() -> annotation.extra());
+        List<TypeElement> extraTypeElements = typeMirrors.stream()
+                                                        .map(DeclaredType::asElement)
+                                                        .map(TypeElement.class::cast)
+                                                        .collect(Collectors.toList());
+        if (extraTypeElements.isEmpty()) return;
+
+        for (TypeElement typeElement : extraTypeElements) {
+            JavaFile javaFile = this.createJavaFile(typeElement);
+            javaFile.writeTo(this.filer);
+        }
     }
 
     private JavaFile createJavaFile(TypeElement element) {

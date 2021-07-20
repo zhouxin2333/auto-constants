@@ -12,4 +12,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface AutoConstants {
+
+    // 添加和导入一些其他类，一些不方便在类上上加@AutoContants的类
+    // 比如第三方jar包中的类
+    Class[] extra() default {};
 }

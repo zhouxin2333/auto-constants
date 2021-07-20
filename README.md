@@ -3,10 +3,13 @@
 **auto-constants**项目是一个为`Java Bean`自动生成属性名常量类的工具，同时支持`JPA`规范下的表名和表字段名常量
 
 * [举个例子](#举个例子)
+  * [本工程使用](#本工程使用)  
+  * [第三方库中类的导入](#第三方库中类的导入)
 * [如何使用](#如何使用)
+  
 
 ### 举个例子
-
+#### 本工程使用
 ```
 public class User{
     private String name;
@@ -55,6 +58,18 @@ public class Person_{
     public static final String COLUMN_nickName = "nick_name";
 }
 ```
+#### 第三方库中类的导入
+如果遇到是第三方类库的情况，还可以使用`@AutoConstants`中的`extra`方法，将第三方类导入。
+推荐单独使用一个配置类去做相应的导入
+
+```
+@AutoConstants(extra = {XXX.class, XXX1.class})
+public class AutoConstantConfig {
+
+}
+```
+
+编译成功后自动会生成对应的`XXX_.java`和`XXX1_.java`
 
 ### 如何使用
 添加以下依赖即可使用
@@ -62,6 +77,7 @@ public class Person_{
 <dependency>
      <groupId>cool.zhouxin</groupId>
      <artifactId>auto-constants</artifactId>
-     <version>0.0.1</version>
+     <version>0.0.2</version>
 </dependency>
 ```
+
